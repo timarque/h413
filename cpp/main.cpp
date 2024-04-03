@@ -10,7 +10,6 @@
 #include "instance.h"
 #include "optimisation.h"
 #include "utilities.h"
-#include "neighborhoods.h"
 #include "algorithms.h"
 
 char *FileName;
@@ -84,15 +83,14 @@ int main(int argc, char **argv){
         cheneryWatanabe(currentSolution);
     }
 
-    /* Print solution */
     printf("Initial solution:\n");
-    for (j=0; j < PSize; j++) 
-    printf(" %ld", currentSolution[j]);
+    for (int z=0; z < PSize; z++) 
+    printf(" %ld", currentSolution[z]);
     printf("\n");
-
      /* Compute cost of solution and print it */
     cost = computeCost(currentSolution);
     printf("Cost of this initial solution: %d\n\n", cost);
+    //
 
      // neighborhoods, 0 = exchange, 1 = transpose, 2 = insert;
     if (strcmp(argv[4],"exchange") == 0){
@@ -134,18 +132,20 @@ int main(int argc, char **argv){
         return 0;
     }
 
+    // print here elapsed time
+    std::chrono::high_resolution_clock::time_point end_time = std::chrono::high_resolution_clock::now(); // End timer
+    // Calculate elapsed time in seconds
+    std::chrono::seconds duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
+    std::cout << "Elapsed Time: " << duration.count() << " seconds\n";
+
+
     printf("new solution \n");
     for (j=0; j < PSize; j++) 
     printf(" %ld", currentSolution[j]);
     printf("\n");
     cost = computeCost(currentSolution);
     printf("Cost of this new solution: %d\n\n", cost);
-    // print here elapsed time
-    std::chrono::high_resolution_clock::time_point end_time = std::chrono::high_resolution_clock::now(); // End timer
 
-    // Calculate elapsed time in seconds
-    std::chrono::seconds duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
-    std::cout << "Elapsed Time: " << duration.count() << " seconds\n";
     std::cout << "Writing solution to file" << std::endl;
 
     fileoutname = "best_known/lop_" + algo_used + neighborhood_used + constr_heuristic + ".dat";
@@ -153,7 +153,7 @@ int main(int argc, char **argv){
     std::string file_name = std::string(FileName);
     file_name.erase(0,10);
     std::string write = file_name + "       " + std::to_string(cost);
-    std::string write_time = file_name + " time : " + std::to_string(duration.count()) + "s";
+    std::string write_time = file_name + " time : " + std::to_string(duration.count()) + " s";
     std::cout << write_time << std::endl;
     bool found = false;
     std::vector<std::string> lines; 

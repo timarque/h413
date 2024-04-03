@@ -39,7 +39,7 @@
 long int **CostMat;
 
 
-long long int computeCost (long int *s) {
+long long int computeCost(long int *s) {
     int h,k;
     long long int sum;
     for (sum = 0, h = 0; h < PSize; h++ )
@@ -49,6 +49,13 @@ long long int computeCost (long int *s) {
     return(sum);
 }
 
+long long int computeAtract(int row) { // attractiveness of a row for chenery watanabe ( sum of all values of the row )
+    long long int sum = 0;
+    for (int j = 0; j < PSize; j++){
+        sum += CostMat[row][j];
+    }
+    return sum;
+}
 
 void createRandomSolution(long int *s) {
     int j; 
@@ -75,7 +82,7 @@ void cheneryWatanabe(long int *s){
         for (int j=0; j < PSize; j++){
             if (usable[j] != -1){
                 empty[i] = usable[j];
-                cost = computeCost(empty);
+                cost = computeAtract(empty[i]);
                 if (cost > max){
                     max = cost;
                     ind = j;
@@ -88,5 +95,6 @@ void cheneryWatanabe(long int *s){
         usable[ind] = -1;
     }
     free (empty);
+    free (usable);
 }
 
