@@ -60,6 +60,7 @@ void createRandomSolution(long int *s) {
     }
     free ( random );
 }
+
 // check if this is correct
 void cheneryWatanabe(long int *s){
     long int* usable;
@@ -74,7 +75,7 @@ void cheneryWatanabe(long int *s){
         for (int j=0; j < PSize; j++){
             if (usable[j] != -1){
                 empty[i] = usable[j];
-                cost = computeCost(empty); // check for here can probably do it aswell
+                cost = computeCost(empty);
                 if (cost > max){
                     max = cost;
                     ind = j;

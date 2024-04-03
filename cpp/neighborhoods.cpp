@@ -8,9 +8,9 @@
 #include "utilities.h"
 
 
-long *exchange(long *solution, int i, int j){
+long *exchange(long  int *solution, int i, int j){
     int temp;   
-    long* currentSolution = (long *)malloc(PSize * sizeof(long)); 
+    long int* currentSolution = (long int *)malloc(PSize * sizeof(long int)); 
     for (int k = 0; k < PSize; k++) {
         currentSolution[k] = solution[k];
     }
@@ -19,18 +19,15 @@ long *exchange(long *solution, int i, int j){
     temp = currentSolution[i];
     currentSolution[i] = currentSolution[j];
     currentSolution[j] = temp;
-    for (int z=0; z < PSize; z++) 
-    printf(" %ld", currentSolution[z]);
-    printf("\n");
     return currentSolution;
 }
 
 // not working correct 
-long *transpose(long *solution, int i, int j){
+long *transpose(long int *solution, int i, int j){
     int temp;
     if (j >= PSize)
     j -= PSize;
-    long * currentSolution = (long *)malloc(PSize * sizeof(long)); 
+    long int* currentSolution = (long int *)malloc(PSize * sizeof(long int)); 
 
     for (int k = 0; k < PSize; k++) {
         currentSolution[k] = solution[k];
@@ -42,15 +39,11 @@ long *transpose(long *solution, int i, int j){
     return currentSolution;
 }
 
-long* insert(long *solution, int i, int j) {
+long* insert(long int *solution, int i, int j) {
     int temp, toinsert;   
     if (j >= PSize)
     j -= PSize;
-    long* currentSolution = (long *)malloc(PSize * sizeof(long)); 
-    if (currentSolution == NULL) {
-        // Handle allocation failure
-        return NULL;
-    }
+    long int* currentSolution = (long int *)malloc(PSize * sizeof(long int)); 
     for (int k = 0; k < PSize; k++) {
         currentSolution[k] = solution[k];
     }

@@ -119,7 +119,7 @@ int main(int argc, char **argv){
         fprintf(stderr, "Neighborhood provided does not exist.\n");
         return 0;
     }
-
+    // algorithms;
     if (strcmp(argv[3], "first") == 0){
         algo_used = "first_";
         firstImprovement(currentSolution, neighborhood, cost);
