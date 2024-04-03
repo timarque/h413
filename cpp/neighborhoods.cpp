@@ -8,45 +8,44 @@
 #include "utilities.h"
 
 
-long *exchange(long *solution){
-    int temp, firstRandomPosition, secondRandomPosition;
-    firstRandomPosition = randInt(0,PSize-1);
-    secondRandomPosition = firstRandomPosition + randInt(1,(PSize-2));       
+long *exchange(long *solution, int i, int j){
+    int temp;   
     long* currentSolution = (long *)malloc(PSize * sizeof(long)); 
     for (int k = 0; k < PSize; k++) {
         currentSolution[k] = solution[k];
     }
-    if (secondRandomPosition >= PSize)
-    secondRandomPosition -= PSize;
-    temp = currentSolution[firstRandomPosition];
-    currentSolution[firstRandomPosition] = currentSolution[secondRandomPosition];
-    currentSolution[secondRandomPosition] = temp;
+    if (j >= PSize)
+    j -= PSize;
+    temp = currentSolution[i];
+    currentSolution[i] = currentSolution[j];
+    currentSolution[j] = temp;
+    for (int z=0; z < PSize; z++) 
+    printf(" %ld", currentSolution[z]);
+    printf("\n");
     return currentSolution;
 }
 
-
-long *transpose(long *solution){
-    int temp, firstRandomPosition, secondRandomPosition;
-    firstRandomPosition = randInt(0,PSize-1);
-    secondRandomPosition = firstRandomPosition + randInt(1,(PSize-2));      
-    if (secondRandomPosition >= PSize)
-    secondRandomPosition -= PSize;
+// not working correct 
+long *transpose(long *solution, int i, int j){
+    int temp;
+    if (j >= PSize)
+    j -= PSize;
     long * currentSolution = (long *)malloc(PSize * sizeof(long)); 
+
     for (int k = 0; k < PSize; k++) {
         currentSolution[k] = solution[k];
     }    
-    temp = currentSolution[firstRandomPosition];
-    currentSolution[firstRandomPosition] = currentSolution[secondRandomPosition];
-    currentSolution[secondRandomPosition] = temp;
+    temp = currentSolution[i];
+    currentSolution[i] = currentSolution[j];
+    currentSolution[j] = temp;
+
     return currentSolution;
 }
 
-long* insert(long *solution) {
-    int temp, toinsert, firstRandomPosition, secondRandomPosition;   
-    firstRandomPosition = randInt(0,PSize-1);
-    secondRandomPosition = firstRandomPosition + randInt(1,(PSize-2));
-    if (secondRandomPosition >= PSize)
-    secondRandomPosition -= PSize;
+long* insert(long *solution, int i, int j) {
+    int temp, toinsert;   
+    if (j >= PSize)
+    j -= PSize;
     long* currentSolution = (long *)malloc(PSize * sizeof(long)); 
     if (currentSolution == NULL) {
         // Handle allocation failure
@@ -55,18 +54,17 @@ long* insert(long *solution) {
     for (int k = 0; k < PSize; k++) {
         currentSolution[k] = solution[k];
     }
-    toinsert = currentSolution[firstRandomPosition];
-    if (secondRandomPosition < firstRandomPosition) {
-        for (int z = firstRandomPosition; z > secondRandomPosition; z--) {
+    toinsert = currentSolution[i];
+    if (j < i) {
+        for (int z = i; z > j; z--) {
             currentSolution[z] = currentSolution[z - 1];
         }
     } else {
-        for (int z = firstRandomPosition; z < secondRandomPosition; z++) {
+        for (int z = i; z < j; z++) {
             currentSolution[z] = currentSolution[z + 1];
         }
     }
 
-    currentSolution[secondRandomPosition] = toinsert;
-
+    currentSolution[j] = toinsert;
     return currentSolution;
 }

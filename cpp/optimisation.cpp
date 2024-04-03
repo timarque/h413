@@ -38,14 +38,14 @@
 
 long int **CostMat;
 
-// start at smallest index since whatever comes before the changes is the same 
-long long int computeCost (long int *s) {// if by the indexes changed, the sum is not greater => sum will never be greater ? 
+
+long long int computeCost (long int *s) {
     int h,k;
     long long int sum;
-    
-    for (sum = 0, h = 0; h < PSize; h++ ) 
+    for (sum = 0, h = 0; h < PSize; h++ )
 	for ( k = h + 1; k < PSize; k++ )
 	    sum += CostMat[s[h]][s[k]];
+
     return(sum);
 }
 

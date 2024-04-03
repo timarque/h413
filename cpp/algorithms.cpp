@@ -9,14 +9,15 @@
 #include "neighborhoods.h"
 
 
-long *checkMove(int neighborhood, long *currentSolution){
+long *checkMove(int neighborhood, long *currentSolution, int i, int j){
     long int *newsol;
     if (neighborhood == 0){ // first imrpovement exchange neighborhood
-        newsol = exchange(currentSolution);
+        newsol = exchange(currentSolution, i, j);
     }else if (neighborhood == 1){
-        newsol = transpose(currentSolution);
-    }else if (neighborhood == 2){
-        newsol = insert(currentSolution);
+        newsol = transpose(currentSolution, i, j);
+    }
+    else if (neighborhood == 2){
+        newsol = insert(currentSolution, i, j);
     }
     return newsol;
 }
@@ -26,24 +27,43 @@ void firstImprovement(long *currentSolution, int neighborhood, int cost){
     long int *newsol;
     bool improvement = true;
     int newCost;
-
+    int start;
     printf("Using first improvement\n");
+    if (neighborhood != 1){ 
     while (improvement){
         improvement = false;
-        for(int i=0; i < PSize; i++){             
-            for (int j = 0; j < PSize; j++){
-                newsol = checkMove(neighborhood, currentSolution); // check if there is a way to make it so vnd does not need a function 
+        for(int i=0; i < PSize; i++){
+            for (int j = 1; j < PSize; j++){
+                newsol = checkMove(neighborhood, currentSolution, i, j); 
                 /* Recompute cost of solution after the exchange move */
                 /* There are some more efficient way to do this, instead of recomputing everything... */
                 newCost = computeCost(newsol);
                 if (newCost > cost){
                     improvement = true;
                     cost = newCost;
-                    // i = PSize;
                     j = PSize;
                     for (int k = 0; k < PSize; k++) {
                         currentSolution[k] = newsol[k];
                     }
+                }
+            }
+             
+        }
+    }
+    }else{ // different for transpose since need to be only adjacent and checking for transpose in other loop would cause other neighborhoods to be slower
+        while (improvement){
+            improvement = false;
+            for(int i=0; i < PSize; i++){
+                newsol = checkMove(neighborhood, currentSolution, i, i + 1);
+                newCost = computeCost(newsol);
+                if (newCost > cost){
+                    improvement = true;
+                    cost = newCost;
+                    i = PSize;
+                    for (int k = 0; k < PSize; k++) {
+                        currentSolution[k] = newsol[k];
+                    }
+
                 }
             }
         }
@@ -58,27 +78,50 @@ void bestImprovement(long *currentSolution, int neighborhood, int cost){
     memsol = (long int *)malloc(PSize * sizeof(long int));
     bool improvement = true;
     printf("Using best improvement\n");
-    while (improvement){
-        improvement = false;
-        for(int i=0; i < PSize; i++){             
-            for (int j = 0; j < PSize; j++){
-                /* There are some more efficient way to do this, instead of recomputing cost of everything... */
-                newsol = checkMove(neighborhood, currentSolution); 
+    if (neighborhood != 1){
+        while (improvement){
+            improvement = false;
+            for(int i=0; i < PSize; i++){      
+                for (int j = 1; j < PSize; j++){
+                    newsol = checkMove(neighborhood, currentSolution, i, j);
+                    newCost = computeCost(newsol);
+                    if (newCost > cost){
+                        improvement = true;
+                        cost = newCost;
+                        for (int k = 0; k < PSize; k++) {
+                            memsol[k] = newsol[k];
+                        }
+                    }
+                }
+                for (int k = 0; k < PSize; k++) { 
+                 currentSolution[k] = memsol[k];   
+                }
+            
+            }
+        }
+    }else{
+        while (improvement){
+            improvement = false;
+            for(int i=0; i < PSize; i++){
+                newsol = checkMove(neighborhood, currentSolution, i, i + 1);
                 newCost = computeCost(newsol);
                 if (newCost > cost){
                     improvement = true;
                     cost = newCost;
                     for (int k = 0; k < PSize; k++) {
-                        memsol[k] = newsol[k]; // im not sure this is correct, do i just put current sol here or no ? 
+                        memsol[k] = newsol[k];
                     }
                 }
             }
-            for (int k = 0; k < PSize; k++) { // this or instant change solution each time ?  maybe this but dk
-                currentSolution[k] = memsol[k]; 
-            }
+            for (int k = 0; k < PSize; k++) { 
+                 currentSolution[k] = memsol[k];   
+                }
         }
+        
     }
 }
+    
+
 
 // vnd algo
 void vnd(long *currentSolution, int neighborhood, int cost){
@@ -97,9 +140,10 @@ void vnd(long *currentSolution, int neighborhood, int cost){
     while (improvement){
         improvement = false;
         for(int i=0; i < PSize; i++){ 
-            int j = 0;      
+            int j = 1;
+            iterator = 0;  
             while (j < PSize){
-                newsol = checkMove(neighborhoods[iterator], currentSolution);
+                newsol = checkMove(neighborhoods[iterator], currentSolution, i, j);
                 /* Recompute cost of solution after the exchange move */
                 /* There are some more efficient way to do this, instead of recomputing everything... */                
                 newCost = computeCost(newsol);
@@ -111,10 +155,9 @@ void vnd(long *currentSolution, int neighborhood, int cost){
                     for (int k = 0; k < PSize; k++) {
                         currentSolution[k] = newsol[k];
                     }
-                    iterator = 0;
                 }else{
-                    if (iterator == 2){
-                        iterator = 0;
+                    if (iterator == 2){ // skip transpose since already tested for this index i (its the first tested in  both cases)
+                        iterator = 1;
                         j++;
                     }else{
                         iterator++;
