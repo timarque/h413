@@ -67,11 +67,9 @@ int main(int argc, char **argv){
         Seed += (long int) CostMat[i][j];
     printf("Seed used to initialize RNG: %ld.\n\n", Seed);
 
-    // what comes after will be the for loop
     // start time 
     std::chrono::high_resolution_clock::time_point start_time = std::chrono::high_resolution_clock::now(); // Start timer
     currentSolution = (long int *)malloc(PSize * sizeof(long int));
-
 
     if (strcmp(argv[5], "random") == 0){
         std::cout << "Creating random initial solution" << std::endl;
@@ -117,7 +115,7 @@ int main(int argc, char **argv){
         fprintf(stderr, "Neighborhood provided does not exist.\n");
         return 0;
     }
-    // algorithms;
+    // algorithms; Do it starting from the neighborhood, so neighborhood is chosen, then call first Improvement ? 
     if (strcmp(argv[3], "first") == 0){
         algo_used = "first_";
         firstImprovement(currentSolution, neighborhood, cost);
@@ -136,7 +134,6 @@ int main(int argc, char **argv){
     std::chrono::high_resolution_clock::time_point end_time = std::chrono::high_resolution_clock::now(); // End timer
     // Calculate elapsed time in seconds
     std::chrono::seconds duration = std::chrono::duration_cast<std::chrono::seconds>(end_time - start_time);
-    std::cout << "Elapsed Time: " << duration.count() << " seconds\n";
 
 
     printf("new solution \n");
@@ -146,7 +143,7 @@ int main(int argc, char **argv){
     cost = computeCost(currentSolution);
     printf("Cost of this new solution: %d\n\n", cost);
 
-    std::cout << "Writing solution to file" << std::endl;
+    printf("Writing solution to file \n");
 
     fileoutname = "best_known/lop_" + algo_used + neighborhood_used + constr_heuristic + ".dat";
     fileoutnametime = "best_known/lop_" + algo_used + neighborhood_used + constr_heuristic + "_times.dat";
@@ -210,6 +207,7 @@ int main(int argc, char **argv){
         }
         outfiletime.close();
     } 
+    free(currentSolution);
 
     return 0;
 }

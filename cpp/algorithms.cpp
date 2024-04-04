@@ -8,111 +8,120 @@
 #include "utilities.h"
 
 
-// neighborhoods also here as it reduces run time compared to newfile
-long *exchange(long  int *solution, int i, int j){
+void exchange(long  int *solution, int i, int j){
     int temp;   
-    long int* currentSolution = (long int *)malloc(PSize * sizeof(long int)); 
-    for (int k = 0; k < PSize; k++) {
-        currentSolution[k] = solution[k];
+    if (j >= PSize){
+        j -= PSize;
     }
-    if (j >= PSize)
-    j -= PSize;
-    temp = currentSolution[i];
-    currentSolution[i] = currentSolution[j];
-    currentSolution[j] = temp;
-    return currentSolution;
+    temp = solution[i];
+    solution[i] = solution[j];
+    solution[j] = temp;
 }
 
 // not working correct 
-long *transpose(long int *solution, int i, int j){
+void transpose(long int *solution, int i, int j){
     int temp;
-    if (j >= PSize)
-    j -= PSize;
-    long int* currentSolution = (long int *)malloc(PSize * sizeof(long int)); 
+    if (j >= PSize){
+        j -= PSize;
+    }
+    if (i >= PSize){    
+        i -= PSize;
+    }
 
-    for (int k = 0; k < PSize; k++) {
-        currentSolution[k] = solution[k];
-    }    
-    temp = currentSolution[i];
-    currentSolution[i] = currentSolution[j];
-    currentSolution[j] = temp;
 
-    return currentSolution;
+    temp = solution[i];
+    solution[i] = solution[j];
+    solution[j] = temp;
+
 }
 
-long* insert(long int *solution, int i, int j) {
+void insert(long int *solution, int i, int j) {
     int temp, toinsert;   
-    if (j >= PSize)
+    if (j >= PSize){
         j -= PSize;
-    long int* currentSolution = (long int *)malloc(PSize * sizeof(long int)); 
-    for (int k = 0; k < PSize; k++) {
-        currentSolution[k] = solution[k];
     }
-    toinsert = currentSolution[i];
+    toinsert = solution[i];
     if (j < i) {
         for (int z = i; z > j; z--) {
-            currentSolution[z] = currentSolution[z - 1];
+            solution[z] = solution[z - 1];
         }
     } else {
         for (int r = i; r < j; r++) {
-            currentSolution[r] = currentSolution[r + 1];
+            solution[r] = solution[r + 1];
         }
     }
-    currentSolution[j] = toinsert;
-    return currentSolution;
+    solution[j] = toinsert;
 }
 
-
-
-long *checkMove(int neighborhood, long int *currentSolution, int i, int j){
-    long int *newsol;
-    if (neighborhood == 0){ // first imrpovement exchange neighborhood
-        newsol = exchange(currentSolution, i, j);
+void checkMove(int neighborhood, long *currentSolution, int i, int j){
+    if (neighborhood == 0){
+        exchange(currentSolution, i, j);
     }else if (neighborhood == 1){
-        newsol = transpose(currentSolution, i, j);
+        transpose(currentSolution, i, j);
+    }else {
+        insert(currentSolution, i, j);
     }
-    else if (neighborhood == 2){
-        newsol = insert(currentSolution, i, j);
-    }
-    return newsol;
 }
 
 // first improvement algo
 void firstImprovement(long *currentSolution, int neighborhood, int cost){
     int newCost;
-    long int *newsol;
     bool improvement = true;
-    if (neighborhood != 1){
+    if (neighborhood == 0){
+        while (improvement){
+            improvement = false;
+            for (int i = 0; i < PSize; i++){
+                for (int j = i + 1; j < PSize; j++){ // Iterate from i + 1 to PSize to avoid unnecessary symmetry checks
+                    exchange(currentSolution, i, j);
+                    newCost = computeCost(currentSolution);
+                    if (newCost > cost){
+                        cost = newCost;
+                        improvement = true;
+                        break; // Break out of the inner loop since we found an improvement
+                    } else {
+                        exchange(currentSolution, i, j); // Reset the exchange
+                    }
+                    
+                }
+                if (improvement){
+                    break; // Break out of the outer loop if there's an improvement
+                }
+            }
+        }
+    }else if(neighborhood == 2){
         while (improvement){
             improvement = false;
             for (int i = 0; i < PSize; i++){
                 for (int j = 0; j < PSize; j++){
-                    newsol = checkMove(neighborhood, currentSolution, i, j);
-                    newCost = computeCost(newsol);
+                    insert(currentSolution, i, j);
+                    newCost = computeCost(currentSolution);
                     if (newCost > cost){
                         cost = newCost;
                         improvement = true;
-                        for (int k=0; k < PSize; k++){
-                            currentSolution[k] = newsol[k];
-                        }
-                        break; // break out of the loop since first improvement ( if break out of both loops it just goes on infinetly)
+                        break; // break out of the loop since first improvement  same as before
+                    }else{
+                        insert( currentSolution, j, i); // reset
                     }
+                    
+                }
+                if (improvement){
+                    break;
                 }
             }
         }
     }else{ // transpose neighborhood here since different and so code can be a bit more clear above without having to make workarounds for it to work with transpose
         while (improvement){
             improvement = false;
-            for(int i=0; i < PSize; i++){
-                newsol = checkMove(neighborhood, currentSolution, i, i + 1);
-                newCost = computeCost(newsol);
+            for(int i=0; i < PSize; i++){ // same as 2 loops
+                transpose( currentSolution, i, i + 1);
+                newCost = computeCost(currentSolution);
                 if (newCost > cost){
                     improvement = true;
                     cost = newCost;
-                    for (int k=0; k < PSize; k++){
-                        currentSolution[k] = newsol[k];
-                    }
                     break;
+                }else{
+                    transpose(currentSolution, i + 1, i);
+
                 }
             }
         }
@@ -123,26 +132,51 @@ void firstImprovement(long *currentSolution, int neighborhood, int cost){
 // best imrpvement algo
 void bestImprovement(long int *currentSolution, int neighborhood, int cost){
     int newCost;
-    long int *newsol;
     long int *memsol;
     memsol = (long int *)malloc(PSize * sizeof(long int));
     bool improvement = true;
     printf("Using best improvement\n");
-    if (neighborhood != 1){
+    if (neighborhood == 2){
         while (improvement){
             improvement = false;
             int k = 0, l = 0;
             for(int i=0; i < PSize; i++){      
                 for (int j = 0; j < PSize; j++){
-                    newsol = checkMove(neighborhood, currentSolution, i, j);
-                    newCost = computeCost(newsol);
+                    insert(currentSolution, i, j);
+                    newCost = computeCost(currentSolution);
                     if (newCost > cost){
                         improvement = true;
                         cost = newCost;
-
                         for (int k = 0; k < PSize; k++) {
-                            memsol[k] = newsol[k]; // memorising best solution found so far
+                            memsol[k] = currentSolution[k]; // memorising best solution found so far
                         }
+                    }else{
+                        insert(currentSolution, j, i);
+                    }
+                }
+            }
+            if (improvement){
+                for (int k=0; k < PSize; k++){
+                    currentSolution[k] = memsol[k];
+                }
+            }
+        }
+    }else if (neighborhood == 0){
+        while (improvement){
+            improvement = false;
+            int k = 0, l = 0;
+            for(int i=0; i < PSize; i++){  
+                for (int j = i + 1; j < PSize; j++){
+                    exchange(currentSolution, i, j);
+                    newCost = computeCost(currentSolution);
+                    if (newCost > cost){
+                        improvement = true;
+                        cost = newCost;
+                        for (int k = 0; k < PSize; k++) {
+                            memsol[k] = currentSolution[k]; // memorising best solution found so far
+                        }
+                    }else{
+                        exchange(currentSolution, j, i);
                     }
                 }
             }
@@ -156,15 +190,18 @@ void bestImprovement(long int *currentSolution, int neighborhood, int cost){
         while (improvement){
             improvement = false;
             for(int i=0; i < PSize; i++){
-                newsol = checkMove(neighborhood, currentSolution, i, i + 1);
-                newCost = computeCost(newsol);
+                transpose(currentSolution, i, i + 1);
+                newCost = computeCost(currentSolution);
                 if (newCost > cost){
                     improvement = true;
                     cost = newCost;
                     for (int k = 0; k < PSize; k++) {
-                        memsol[k] = newsol[k];
+                        memsol[k] = currentSolution[k];
                     }
+                }else{
+                    transpose( currentSolution, i + 1, i);
                 }
+                
             }
             if (improvement){
                 for (int k=0; k < PSize; k++){
@@ -174,6 +211,7 @@ void bestImprovement(long int *currentSolution, int neighborhood, int cost){
         }
         
     }
+    free(memsol);
 }
     
 
@@ -187,7 +225,6 @@ void vnd(long int *currentSolution, int neighborhood, int cost){
          int neighborhoods[3] = {1,2,0};
     }
     int iterator = 0;
-    long int *newsol;
     bool improvement = true;
     int newCost;
     printf("Using vnd\n");
@@ -195,21 +232,22 @@ void vnd(long int *currentSolution, int neighborhood, int cost){
     while (improvement){
         improvement = false;
         for(int i=0; i < PSize; i++){ 
-            int j = 1;
+            int j = 0;
             iterator = 0;  
             while (j < PSize){
-                newsol = checkMove(neighborhoods[iterator], currentSolution, i, j);
+                checkMove(neighborhoods[iterator], currentSolution, i, j);
                 /* Recompute cost of solution after the exchange move */
                 /* There are some more efficient way to do this, instead of recomputing everything... */                
-                newCost = computeCost(newsol);
+                newCost = computeCost(currentSolution);
                 if (newCost > cost){
                     improvement = true;
                     cost = newCost;
                     for (int k=0; k < PSize; k++){
-                        currentSolution[k] = newsol[k];
+                        currentSolution[k] = currentSolution[k];
                     }
-                    j = PSize;                    
+                    j = PSize;                   
                 }else{
+                    checkMove(neighborhoods[iterator], currentSolution, j, i);
                     if (iterator == 2){ // skip transpose since already tested for this index i (its the first tested in  both cases)
                         iterator = 1;
                         j++;
@@ -218,6 +256,9 @@ void vnd(long int *currentSolution, int neighborhood, int cost){
                     }
                 }
             }
+        if (improvement){
+            break;
+        }
         }
     }
 }
