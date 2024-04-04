@@ -72,11 +72,11 @@ int main(int argc, char **argv){
     currentSolution = (long int *)malloc(PSize * sizeof(long int));
 
     if (strcmp(argv[5], "random") == 0){
-        std::cout << "Creating random initial solution" << std::endl;
+        printf("Creating random initial solution \n");
         constr_heuristic = "random";
         createRandomSolution(currentSolution); // check if this is "uniform random picking"
     }else if (strcmp(argv[5], "CW") == 0 || strcmp(argv[5], "cw") == 0 ){
-        std::cout << "Creating initial solution using CW heuristic" << std::endl;
+        printf("Creating initial solution using CW heuristic \n");
         constr_heuristic = "cw";
         cheneryWatanabe(currentSolution);
     }
@@ -94,23 +94,23 @@ int main(int argc, char **argv){
     if (strcmp(argv[4],"exchange") == 0){
         neighborhood = 0;
         neighborhood_used = "ex_";
-        std::cout << "Using exchange neighborhood" << std::endl;
+        printf("Using exchange neighborhood \n");
     }else if (strcmp(argv[4],"transpose") == 0){
         neighborhood = 1;
         neighborhood_used = "tr_";
-        std::cout << "Using transpose neighborhood" << std::endl;
+        printf("Using transpose neighborhood \n");
     }else if (strcmp(argv[4],"insertion") == 0){
         neighborhood = 2;
         neighborhood_used = "in_";
-        std::cout << "Using insert neighborhood" << std::endl;
+        printf("Using insertion neighborhood \n");
     }else if (strcmp(argv[4], "tei") == 0){
         neighborhood = 3;
         neighborhood_used = "tei_";
-        std::cout << "Using transpose, exchange, insert neighborhood ordering" << std::endl;
+        printf("Using transpose, exchange, insertion neighborhood ordering \n");
     }else if (strcmp(argv[4], "tie") == 0){
         neighborhood = 4;
         neighborhood_used = "tie_";
-        std::cout << "Using transpose, insert, exchange neighborhood ordering" << std::endl;
+        printf("Using transpose, insertion, exchange neighborhood ordering \n");
     }else{
         fprintf(stderr, "Neighborhood provided does not exist.\n");
         return 0;
@@ -142,8 +142,6 @@ int main(int argc, char **argv){
     printf("\n");
     cost = computeCost(currentSolution);
     printf("Cost of this new solution: %d\n\n", cost);
-
-    printf("Writing solution to file \n");
 
     fileoutname = "best_known/lop_" + algo_used + neighborhood_used + constr_heuristic + ".dat";
     fileoutnametime = "best_known/lop_" + algo_used + neighborhood_used + constr_heuristic + "_times.dat";

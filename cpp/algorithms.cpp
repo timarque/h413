@@ -63,41 +63,24 @@ void checkMove(int neighborhood, long *currentSolution, int i, int j){
 void firstImprovement(long *currentSolution, int neighborhood, int cost){ 
     int newCost;
     bool improvement = true;
-    if (neighborhood == 0){
+    if (neighborhood != 1){
         while (improvement){
             improvement = false;
             for (int i = 0; i < PSize; i++){
-                for (int j = i + 1; j < PSize; j++){ // Iterate from i + 1 to PSize to avoid unnecessary symmetry checks
-                    exchange(currentSolution, i, j);
+                for (int j = 0; j < PSize; j++){ // this will have redundancy for exchange but should not be too bad
+                    checkMove(neighborhood,currentSolution, i, j);
                     newCost = computeCost(currentSolution);
                     if (newCost > cost){
                         cost = newCost;
                         improvement = true;
                     }else {
-                        exchange(currentSolution, i, j); // Reset the exchange
+                        checkMove(neighborhood, currentSolution, j, i); // Reset the exchange
                     }
                     
                 }
             }
         }
-    }else if(neighborhood == 2){
-        while (improvement){
-            improvement = false;
-            for (int i = 0; i < PSize; i++){
-                for (int j = 0; j < PSize; j++){
-                    insert(currentSolution, i, j);
-                    newCost = computeCost(currentSolution);
-                    if (newCost > cost){
-                        cost = newCost;
-                        improvement = true;
-                    }else{
-                        insert( currentSolution, j, i); // reset
-                    }
-                    
-                }
-            }
-        }
-    }else{ // maybe redo this ? 
+    }else{  
         while (improvement){
             improvement = false;
             for(int i=0; i < PSize; i++){ // same as 2 loops
@@ -108,7 +91,6 @@ void firstImprovement(long *currentSolution, int neighborhood, int cost){
                     cost = newCost;
                 }else{
                     transpose(currentSolution, i + 1, i);
-
                 }
             }
         }
@@ -122,13 +104,12 @@ void bestImprovement(long int *currentSolution, int neighborhood, int cost){
     int memi, memj;
     bool improvement = true;
     printf("Using best improvement\n");
-    if (neighborhood == 2){
+    if (neighborhood != 1){
         while (improvement){
             improvement = false;
-            int k = 0, l = 0;
             for(int i=0; i < PSize; i++){      
                 for (int j = 0; j < PSize; j++){
-                    insert(currentSolution, i, j);
+                    checkMove(neighborhood, currentSolution, i, j);
                     newCost = computeCost(currentSolution);
                     if (newCost > cost){
                         improvement = true;
@@ -136,32 +117,11 @@ void bestImprovement(long int *currentSolution, int neighborhood, int cost){
                         memi = i;
                         memj = j;
                     }
-                    insert(currentSolution, j, i);
+                    checkMove(neighborhood,currentSolution, j, i);
                 }
             }
             if (improvement){
-                insert(currentSolution, memi, memj);
-            }
-        }
-    }else if (neighborhood == 0){
-        while (improvement){
-            improvement = false;
-            int k = 0, l = 0;
-            for(int i=0; i < PSize; i++){  
-                for (int j = i + 1; j < PSize; j++){
-                    exchange(currentSolution, i, j);
-                    newCost = computeCost(currentSolution);
-                    if (newCost > cost){
-                        improvement = true;
-                        cost = newCost;
-                        memi = i;
-                        memj = j;
-                    }
-                    exchange(currentSolution, j, i);   
-                }
-            }
-            if (improvement){
-                exchange(currentSolution, memi, memj);
+                checkMove(neighborhood,currentSolution, memi, memj);
             }
         }
     }else{// transpose neighborhood here since different and so code can be a bit more clear above without having to make workarounds for it to work with transpose
@@ -176,8 +136,6 @@ void bestImprovement(long int *currentSolution, int neighborhood, int cost){
                     memi = i;
                 }
                 transpose( currentSolution, i + 1, i);
-
-                
             }
             if (improvement){
                 transpose(currentSolution, memi, memi + 1);
