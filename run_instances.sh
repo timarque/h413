@@ -17,8 +17,8 @@ for name in $instance_names; do
 
     #${PROGRAM} -i "${INSTANCES_DIR}""${name}" "first" "transpose" "random"
     #${PROGRAM} -i "${INSTANCES_DIR}""${name}" "first" "transpose" "cw"
-    #${PROGRAM} -i "${INSTANCES_DIR}""${name}" "first" "exchange" "random"
-    ${PROGRAM} -i "${INSTANCES_DIR}""${name}" "first" "exchange" "cw"
+    ${PROGRAM} -i "${INSTANCES_DIR}""${name}" "first" "exchange" "random"
+    #${PROGRAM} -i "${INSTANCES_DIR}""${name}" "first" "exchange" "cw"
     #${PROGRAM} -i "${INSTANCES_DIR}""${name}" "first" "insertion" "random"
     #${PROGRAM} -i "${INSTANCES_DIR}""${name}" "first" "insertion" "cw"
 

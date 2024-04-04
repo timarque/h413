@@ -24,6 +24,7 @@
 extern long int **CostMat;
 
 long long int computeCost(long int *lo);
+long long int computepartCost(long int *lo, int start);
 long long int computeAtract(int row);
 void createRandomSolution(long int *s);
 void cheneryWatanabe(long int *s);

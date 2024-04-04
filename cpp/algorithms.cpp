@@ -67,7 +67,7 @@ void firstImprovement(long *currentSolution, int neighborhood, int cost){
         while (improvement){
             improvement = false;
             for (int i = 0; i < PSize; i++){
-                for (int j = 0; j < PSize; j++){ // this will have redundancy for exchange but should not be too bad
+                for (int j = 0; j < PSize; j++){// do not remove redundancy since when we get to j i it may no longer be the same components as when it  was i j since solution updated
                     checkMove(neighborhood,currentSolution, i, j);
                     newCost = computeCost(currentSolution);
                     if (newCost > cost){
@@ -103,12 +103,18 @@ void bestImprovement(long int *currentSolution, int neighborhood, int cost){
     int newCost;
     int memi, memj;
     bool improvement = true;
+    int j;
     printf("Using best improvement\n");
     if (neighborhood != 1){
         while (improvement){
             improvement = false;
-            for(int i=0; i < PSize; i++){      
-                for (int j = 0; j < PSize; j++){
+            for(int i = 0; i < PSize; i++){      
+                if (neighborhood == 0){ // since we do not modify the solution until exploring full neihgborhood, start j at i + 1 to remove redundant exchanges
+                    j = i+1;
+                }else{
+                    j = 0;
+                }
+                for (j; j < PSize; j++){
                     checkMove(neighborhood, currentSolution, i, j);
                     newCost = computeCost(currentSolution);
                     if (newCost > cost){

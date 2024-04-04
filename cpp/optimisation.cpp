@@ -48,6 +48,15 @@ long long int computeCost(long int *s) {
     return sum;
 }
 
+long long int computepartCost(long int *s, int start) {
+    int h,k;
+    long long int sum;
+    for (sum = 0, h = start; h < PSize; h++ )
+	for ( k = h + 1; k < PSize; k++ )
+	    sum += CostMat[s[h]][s[k]];
+    return sum;
+}
+
 
 long long int computeAtract(int row) { // attractiveness of a row for chenery watanabe ( sum of all values of the row )
     long long int sum = 0;
