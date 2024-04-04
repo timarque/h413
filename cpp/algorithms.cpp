@@ -63,6 +63,7 @@ void checkMove(int neighborhood, long *currentSolution, int i, int j){
 void firstImprovement(long *currentSolution, int neighborhood, int cost){ 
     int newCost;
     bool improvement = true;
+    std::cout << cost << std::endl;
     if (neighborhood != 1){
         while (improvement){
             improvement = false;
@@ -162,36 +163,11 @@ void vnd(long int *currentSolution, int neighborhood, int cost){
          int neighborhoods[3] = {1,2,0};
     }
     int iterator = 0;
-    bool improvement = true;
-    int newCost;
     printf("Using vnd\n");
     bool cont = false;
-    while (improvement){
-        improvement = false;
-        for(int i=0; i < PSize; i++){ 
-            int j = 0;
-            iterator = 0;  
-            while (j < PSize){
-                checkMove(neighborhoods[iterator], currentSolution, i, j);
-                /* Recompute cost of solution after the exchange move */
-                /* There are some more efficient way to do this, instead of recomputing everything... */                
-                newCost = computeCost(currentSolution);
-                if (newCost > cost){
-                    improvement = true;
-                    cost = newCost;
-                    for (int k=0; k < PSize; k++){
-                        currentSolution[k] = currentSolution[k];
-                    }               
-                }else{
-                    checkMove(neighborhoods[iterator], currentSolution, j, i);
-                    if (iterator == 2){ // skip transpose since already tested for this index i (its the first tested in  both cases)
-                        iterator = 1;
-                        j++;
-                    }else{
-                        iterator++;
-                    }
-                }
-            }
-        }
-    }
+    while (iterator < 3){ 
+        firstImprovement(currentSolution, neighborhoods[iterator], cost);
+        cost = computeCost(currentSolution);
+        iterator ++;
+        }       
 }

@@ -22,9 +22,6 @@ for name in $instance_names; do
     #${PROGRAM} -i "${INSTANCES_DIR}""${name}" "first" "insertion" "random"
     #${PROGRAM} -i "${INSTANCES_DIR}""${name}" "first" "insertion" "cw"
 
-
-    #${PROGRAM} -i "${INSTANCES_DIR}""${name}" "vnd" "tie" "random"
     #${PROGRAM} -i "${INSTANCES_DIR}""${name}" "vnd" "tie" "cw"
-    #${PROGRAM} -i "${INSTANCES_DIR}""${name}" "vnd" "tei" "random"
     #${PROGRAM} -i "${INSTANCES_DIR}""${name}" "vnd" "tei" "cw"
 done
