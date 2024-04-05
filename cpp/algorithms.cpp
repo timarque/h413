@@ -63,7 +63,6 @@ void checkMove(int neighborhood, long *currentSolution, int i, int j){
 void firstImprovement(long *currentSolution, int neighborhood, int cost){ 
     int newCost;
     bool improvement = true;
-    std::cout << cost << std::endl;
     if (neighborhood != 1){
         while (improvement){
             improvement = false;
@@ -154,7 +153,7 @@ void bestImprovement(long int *currentSolution, int neighborhood, int cost){
     
 
 // vnd algo
-void vnd(long int *currentSolution, int neighborhood, int cost){
+void vnd(long int *currentSolution, int neighborhood, int cost){ 
 
     int neighborhoods[3];
     if (neighborhood == 3){
@@ -164,10 +163,15 @@ void vnd(long int *currentSolution, int neighborhood, int cost){
     }
     int iterator = 0;
     printf("Using vnd\n");
-    bool cont = false;
-    while (iterator < 3){ 
+    int newCost = cost;
+    while (iterator < 3){
         firstImprovement(currentSolution, neighborhoods[iterator], cost);
-        cost = computeCost(currentSolution);
-        iterator ++;
+        newCost = computeCost(currentSolution);
+        if (newCost > cost){
+            cost = newCost;
+            iterator = 0;
+        }else{
+            iterator ++;
+        }
         }       
 }

@@ -177,7 +177,7 @@ int main(int argc, char **argv){
         outfile.close();
     } 
 
- // ORDER OF FILES IS DIFF IN BEST_KNOWN YOU HAVE TO CHANGE THIS
+
     bool foundtime = false;
     std::vector<std::string> linestime;
     std::ifstream filetime(fileoutnametime);
