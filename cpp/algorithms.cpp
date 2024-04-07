@@ -47,8 +47,8 @@ void insert(long int *solution, int i, int j) {
     }
     solution[j] = toinsert;
 }
-
-void checkMove(int neighborhood, long *currentSolution, int i, int j){
+// this modifies solution itself so needs to be called again with inverted indices to reset solution
+void checkMove(int neighborhood, long *currentSolution, int i, int j){ 
     if (neighborhood == 0){
         exchange(currentSolution, i, j);
     }else if (neighborhood == 1){
